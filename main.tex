@@ -2,8 +2,11 @@
 
 \usepackage{amsfonts}
 \usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
 \newcommand{\Z}{\mathbb{Z}}
+\newcommand*{\divmod}[2]{\mathbf{divmod}\left( #1, #2 \right)}
 
 \begin{document}
 \title{Application of Discrete Models}
@@ -16,7 +19,7 @@
 If $a,b \in \Z$ with $b \ne 0$ then $\exists ! q,r \in \Z$ such that $a=qb+r$ where $0 \le r < |b|$.
 This is the \emph{Euclidean division} or \emph{long division} of the \emph{dividend} $a$ with the \emph{divisor} $b$.
 The results of the division are the \emph{quotient} $q$ and the \emph{remainder} $r$.
-The standard notation for the remainder is $a \bmod b$.
+The standard notation for the remainder is $a \bmod b$. In algorithmic setting we use $q, r \gets \divmod{a}{b}$.
 
 \subsection{Number systems}
 
@@ -34,4 +37,148 @@ where the quotient $n_{d-1}b^{d-2} + \cdots + n_2 b + n_1$ is a $d-1$ digit numb
 
 We call $n_0$ the \emph{least significant digit} and $n_{d-1}$ the \emph{most significant digit}.
 The storage order of digits is called \emph{little endian} if we start at the least significant digits and move towards the most significant one. Otherwise it is called \emph{big endian}.
+
+\subsection{Operations on Integers}
+
+\subsubsection{Addition}
+
+Let us assume that we have two unsigned integers stored as digits in a number system with base $b$:
+\[
+    n^{(i)} = \sum_{k=0}^{d^{(i)}-1} n_k^{(i)} b^k,
+\]
+for $i=1,2$.
+The following algorithm computes the digits of the sum $s = n^{(1)} + n^{(2)} = \sum_{k=0}^{d^{(s)}-1} s_k b^k$:
+\begin{algorithm}
+    \caption{Standard addition}
+    \label{alg:standard-add}
+    \begin{algorithmic}[1]
+        \Procedure{StandardAddition}{$n^{(1)}$, $n^{(2)}$}
+            \State $d^{(s)} \gets \max\left( d^{(1)}, d^{(2)} \right)$
+            \State $c \gets 0$
+            \For{$k=0,\ldots,d^{(s)}-1$}
+                \State $c,\ s_k \gets \divmod{n_k^{(1)} + n_k^{(2)} + c}{b}$
+            \EndFor
+            \State \textbf{return} $s$
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+In Algorithm \ref{alg:standard-add} we assume that $n^{(i)}_k = 0$ if $k \ge d^{(i)}$ for $i=1,2$.
+The time complexity of the standard addition is $O\left(d^{(s)}\right)$.
+
+\subsubsection{Multiplication}
+
+Let $n^{(i)}$'s defined same as above for $i=1,2$.
+We will compute the digits of the product $p=n^{(1)} \cdot n^{(2)} = \sum_{k=0}^{d^{(p)}-1} p_k b^k$ with the naive multiplication method:
+\begin{algorithm}
+    \caption{Naive multiplication}
+    \label{alg:naive-mul}
+    \begin{algorithmic}[1]
+        \Procedure{NaiveMultiplication}{$n^{(1)}$, $n^{(2)}$}
+            \State $d^{(p)} \gets d^{(1)} + d^{(2)}$
+            \For{$k=0,\ldots,d^{(p)}-1$}
+                \State $p_k \gets 0$
+            \EndFor
+            \For{$j=0,\ldots,d^{(2)}-1$}
+                \State $c \gets 0$
+                \For{$i=0,\dots,d^{(1)}-1$}
+                    \State $c,\ p_{i+j} \gets \divmod{p_{i+j} + n^{(1)}_i n^{(2)}_j + c}{b}$
+                \EndFor
+            \State $p_{d^{(1)}+j} \gets c$
+            \EndFor
+            \State \textbf{return} $p$
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+The time-complexity of Algorithm \ref{alg:naive-mul} is $O(d^{(1)} \cdot d^{(2)})=O(d^2)$, where $d=\max\left( d^{(1)}, d^{(2)}\right)$.
+
+Karatsuba's idea for faster multiplication can be demonstrated on two-digit numbers. Let
+\[
+    x = x_1 b + x_0,\ \textrm{and}\ y = y_1 b + y_0
+\]
+with $0 \le x_i, y_i < b$ integers.
+Naive multiplication of $x$ and $y$ is
+\begin{align*}
+    z = xy &= \left(x_1 b + x_0 \right)\left(y_1 b + y_0 \right) \\
+           &= x_1 y_1 b^2 + \left(x_1 y_0 + x_0 y_1\right)b + x_0 y_0 \\
+           &= z_1 b^2 + z_1 b + z_0.
+\end{align*}
+This is 4 multiplication and 1 addition.
+
+Now we can express
+\begin{align*}
+    z_1 &= x_1 y_0 + x_0 y_1 \\
+        &= x_1 y_0 + x_0 y_1 - x_1 y_1 + x_1 y_1 - x_0 y_0 + x_0 y_0 \\
+        &= \left(x_1 + x_0\right)y_1 + \left(x_1 + x_0\right)y_0 - x_1 y_1 - x_0 y_0 \\
+        &= \left(x_1 + x_0\right)\left(y_1 + y_0\right) - x_1 y_1 - x_0 y_0 \\
+        &= \left(x_1 + x_0\right)\left(y_1 + y_0\right) - z_2 - z_0.
+\end{align*}
+This is 3 multiplication and 3 additions.
+By extending this idea to more than two digits recursively, the multiplication algorithm performs $O(d^{\log_2 3}) \approx O(d^{1.58})$ single-digit multiplication.
+
+Fast Fourier Transform based algorithms can achieve $O(d \log d)$ complexity.
+
+\subsection{Exponentiation}
+
+We want to compute $x^n$ for some $1 \le n \in \Z$ and $x$ that has multiplication as an operation.
+
+\paragraph{Naive exponentiation}
+By repeated multiplication, we can compute
+\[
+    x^n = \underbrace{x \cdot x \cdots x}_\textrm{$n$ times}.
+\]
+This method requires $n-1$ multiplications.
+
+\paragraph{Repeated squaring}
+If $n=2^s$ for $0 < s \in \Z$, then
+\[
+    x^{\left(2^s\right)} = \left(x^2\right)^{\left(2^{s-1}\right)}.
+\]
+This way we can compute $x^n$ with $\log_2 n = s$ multiplications with the algorithm below:
+\begin{algorithm}
+    \caption{Repeated squaring}
+    \label{alg:repeated-squaring}
+    \begin{algorithmic}[1]
+        \Procedure{RepeatedSquaring}{$x$, $s$}
+            \State $y \gets x$
+            \For{$k=0,\ldots,s-1$}
+                \State $y \gets y^2$
+            \EndFor
+            \State \textbf{return} y
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+\paragraph{Fast exponentiation}
+
+If we write $n = $ in binary, then
+\begin{align*}
+    x^n & = x^{\left( \sum_{k=0}^{d-1}n_k 2^k \right)} \\
+        & = \prod_{k=0}^{d-1} x^{\left( n_k 2^k \right)} \\
+        & = \prod_{k=0}^{d-1} x^{\left( 2^k \right)^{n_k}}.
+\end{align*}
+
+Since $y^{n_k} = y$ if $n_k=1$ and $y=1$ otherwise, we arrive at the following algorithm:
+\begin{algorithm}
+    \caption{Fast exponentiation}
+    \label{alg:fast-exp}
+    \begin{algorithmic}[1]
+        \Procedure{FastExp}{$x$, $n$}
+            \State $y \gets 1$
+            \State $z \gets x$
+            \While{$n > 0$}
+                \State $n, r \gets \divmod{n}{2}$
+                \If{$r=1$}
+                    \State $y \gets y \cdot z$
+                \EndIf
+                \State $z \gets z^2$
+            \EndWhile
+            \State \textbf{return} y
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+This algorithm requires $O(\log_2 n)$ multiplication.
+
 \end{document}
