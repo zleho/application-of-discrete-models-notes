@@ -1,0 +1,37 @@
+\documentclass{article}
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+
+\newcommand{\Z}{\mathbb{Z}}
+
+\begin{document}
+\title{Application of Discrete Models}
+\author{Adam Zlehovszky}
+\maketitle
+
+\section{Representation of Integers}
+
+\subsection{Euclidean division}
+If $a,b \in \Z$ with $b \ne 0$ then $\exists ! q,r \in \Z$ such that $a=qb+r$ where $0 \le r < |b|$.
+This is the \emph{Euclidean division} or \emph{long division} of the \emph{dividend} $a$ with the \emph{divisor} $b$.
+The results of the division are the \emph{quotient} $q$ and the \emph{remainder} $r$.
+The standard notation for the remainder is $a \bmod b$.
+
+\subsection{Number systems}
+
+Let $1 < b \in \Z$ be the \emph{base} of the \emph{number system}.
+For each $0 \le n \in \Z$ there exists a unique $1 \le d \in \Z$ and a unique set of \emph{digits} $0 \le n_1, n_2, \ldots, n_{d-1} < b$ all integers, such that
+\[
+    n = \sum_{k=0}^{d-1}n_k b^{k}.
+\]
+If $n = 0$, then $d=1$ and $n_0 = 0$. Otherwise $d = \left \lfloor \log_{b} n \right \rfloor + 1$ and we can extract the digits of $n$ with long division, since
+\begin{align*}
+    n & = n_{d-1}b^{d-1} + \cdots + n_2 b^2 + n_1 b + n_0 \\
+      & = \left( n_{d-1}b^{d-2} + \cdots + n_2 b + n_1 \right)b + n_0 
+\end{align*}
+where the quotient $n_{d-1}b^{d-2} + \cdots + n_2 b + n_1$ is a $d-1$ digit number and $n_0$ is the extracted digit.
+
+We call $n_0$ the \emph{least significant digit} and $n_{d-1}$ the \emph{most significant digit}.
+The storage order of digits is called \emph{little endian} if we start at the least significant digits and move towards the most significant one. Otherwise it is called \emph{big endian}.
+\end{document}
