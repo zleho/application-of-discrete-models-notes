@@ -152,7 +152,7 @@ This way we can compute $x^n$ with $\log_2 n = s$ multiplications with the algor
 
 \paragraph{Fast exponentiation}
 
-If we write $n = $ in binary, then
+If we write $n = \sum_{k=0}^{d-1}n_k 2^k$ in binary, then
 \begin{align*}
     x^n & = x^{\left( \sum_{k=0}^{d-1}n_k 2^k \right)} \\
         & = \prod_{k=0}^{d-1} x^{\left( n_k 2^k \right)} \\
