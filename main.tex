@@ -4,9 +4,13 @@
 \usepackage{amsmath}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{amsthm}
 
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand*{\divmod}[2]{\mathbf{divmod}\left( #1, #2 \right)}
+\newcommand{\nmid}{\hspace{-4pt}\not|\hspace{2pt}}
+
+\newtheorem{theorem}{Theorem}
 
 \begin{document}
 \title{Application of Discrete Models}
@@ -166,13 +170,12 @@ Since $y^{n_k} = y$ if $n_k=1$ and $y=1$ otherwise, we arrive at the following a
     \begin{algorithmic}[1]
         \Procedure{FastExp}{$x$, $n$}
             \State $y \gets 1$
-            \State $z \gets x$
             \While{$n > 0$}
                 \State $n, r \gets \divmod{n}{2}$
                 \If{$r=1$}
-                    \State $y \gets y \cdot z$
+                    \State $y \gets y \cdot x$
                 \EndIf
-                \State $z \gets z^2$
+                \State $x \gets x^2$
             \EndWhile
             \State \textbf{return} y
         \EndProcedure
@@ -181,4 +184,75 @@ Since $y^{n_k} = y$ if $n_k=1$ and $y=1$ otherwise, we arrive at the following a
 
 This algorithm requires $O(\log_2 n)$ multiplication.
 
+\section{Number Theory and its Applications}
+
+\subsection{Divisibility}
+
+If $aq=b$, then we say that $a$ is a \emph{divisor} of $b$, or $b$ is a \emph{multiple} of $a$.
+The notation is $a \mid b$. Otherwise $a \nmid b$.
+If $a \mid b$, then long division has remainder of $0$ and in case of integers $\frac{b}{a}$ is an integer as well.
+
+The following properties are natural consequences of the definition.
+\begin{enumerate}
+    \item For every $a$, we have that $a \mid a$.
+    \item $a \mid 0$, for every $a$.
+    \item If $0 \mid a$, then $a=0$.
+    \item If $a \mid b$ and $b \mid c$, then $a \mid c$.
+    \item If $a \mid b$ and $c \mid d$, then $ab \mid cd$.
+    \item If $a \mid b$, then $ac \mid bc$ for every $c$.
+    \item If $ac \mid bc$ and $c \neq 0$, then $a \mid b$.
+    \item If $a \mid b_i$ for some finite indices $i$, then $a \mid \sum_i c_i b_i$ for every $c_i$.
+\end{enumerate}
+
+If $\varepsilon \mid a$ for every $a$, then we call $\varepsilon$ a \emph{unit element}.
+The unit elements of $\Z$ are $\pm 1$.
+
+If $a \mid b$ and $b \mid a$ and $a \neq b$, then we call $a$ and $b$ \emph{associated elements}.
+Two elements $a$ and $b$ are associated if and only if $a=\varepsilon b$ for some unit element $\varepsilon$.
+Consequently, $a$ and $b$ are associated integers if and only if $|a| = |b|$.
+
+Let $p \neq 0$ be a non-unit element.
+We say that $p$ is an \emph{irreducible element} if $p=ab$ implies that $a$ or $b$ is an associated element of $p$ (and the other is a unit).
+If an element is not irreducible, then it is \emph{composite}.
+We call $p$ a \emph{prime element} if $p \mid ab$ implies that $p \mid a$ or $p \mid b$.
+If $p$ is an irreducible element, then it is also a prime element.
+In case of integers, the reverse is also true, i.e. every prime element is irreducible.
+
+\begin{theorem}[The Fundamental Theorem of Arithmetic]
+    \label{th:fta}
+    If $a \neq 0$ is not a unit element, then it is a product of irreducible elements.
+    The product is unique (up to ordering and up to multiplication with unit elements).
+\end{theorem}
+
+If $1 < n \in \Z$, then the \emph{canonical form} of
+\[
+    n = p_1^{\alpha_1} \cdots \ p_r^{\alpha_r}
+\]
+where $p_i$'s are different prime numbers (positive prime elements of $\Z$) and $\alpha_i > 0$ for all $i=1,\ldots,r$.
+
+\begin{theorem}[Euclid]
+    There are infinitely many prime numbers.
+\end{theorem}
+\begin{proof}
+    Let us assume that there are only finite many primes $p_1,\ldots,p_n$.
+    In this case the long division of $n = p_1 \cdots p_n + 1$ with $p_i$ yields a remainder of $1$ for every prime.
+    This means that $n$ does not have canonical form, which contradicts Theorem \ref{th:fta}.
+\end{proof}
+
+\begin{theorem}[Distribution of prime numbers]
+    The following statements illustrate some properties of the distribution of prime numbers:
+
+    \begin{enumerate}
+        \item If $N > 1$, then $\exists a > 2$ such that $a + 1, a + 2, \ldots, a+N$ are all composite numbers.
+        \item For every $M > 2$, there is a prime number between $M$ and $2M$.
+    \end{enumerate}
+\end{theorem}
+
+Let $\pi(x)$ denote the number of positive prime numbers below $x$.
+\begin{theorem}[Prime Number Theorem]
+    An approximation of $\pi(x)$ is $\frac{x}{\ln x}$. In other words
+    \[
+        \lim_{x \to +\infty} \frac{\pi(x)}{x/\ln x} = 1.
+    \]
+\end{theorem}
 \end{document}
