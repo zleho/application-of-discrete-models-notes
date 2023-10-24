@@ -456,4 +456,16 @@ The operations on the residue system can be defined as
 \end{proof}
 If $ax \equiv 1 \pmod{m}$, then we call $x$ the \emph{modular inverse} of $a$, denoted by $a^{-1}\pmod{m}$.
 
+\subsection{Solving linear congruence equations}
+
+We search for the integer solutions of $ax \equiv b \pmod{m}$.
+We can convert this expression into the linear Diophantine equation $ax+my=b$.
+We know that $d = \gcd(a,m) \mid b$, that is $b = s \cdot d$ otherwise there is no solution.
+
+A particular $x_0$ can be found by extended Euclidean algorithm.
+If $d = ax'+my'$, then $x_0=x's$ and the general solutions have the form of $x = x_0 + k\frac{m}{d}$ for integers $k$.
+
+We know that $x \equiv x + m \pmod{m}$ and for every $1 < n < m$, $x \not \equiv x+n \pmod{m}$.
+This means if $1 < k\frac{m}{d} < m$, then $x \not\equiv x+k\frac{m}{d} \pmod{m}$.
+So we can list all the different solutions $\pmod{m}$ with $k=0,\ldots,d-1$.
 \end{document}
