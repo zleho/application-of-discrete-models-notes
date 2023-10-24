@@ -369,4 +369,91 @@ We call the procedure \emph{Extended Euclidean algorithm}:
     \end{algorithmic}
 \end{algorithm}
 
+\subsection{Linear Diophantine equation}
+
+Let $a,b,c \in \Z$ and we search for the integers solutions $x,y \in Z$ for the equation
+\[
+    ax + by = c.
+\]
+
+If $d = \gcd(a, b)$ then $d \mid ax + by$ there $d \mid c$. Otherwise there is no solution.
+With Extended Euclidean algorithm, we can compute $d = ax' + by'$.
+Since $d \mid c$, there exists $m \in \Z$ for which $c = d \cdot m$.
+In summary
+\[
+    a \left(x'm\right) + \left(x'm\right) = d\cdot m = c,
+\]
+so $x_0 = x'm$ and $y_0 = y'm$ is a pair of solution.
+
+If there is a pair of solution, then there are infinitely many solutions in the form of
+\[
+    x = x_0 + k\frac{b}{d}, \quad y = y_0 - k\frac{a}{d}
+\]
+where $k \in Z$ and there are no other solutions.
+
+\subsection{Modular arithmetic}
+
+Let $m > 1$. We say that $a$ is \emph{congruent to} $b$ $\pmod{m}$, if $m \mid a - b$.
+The notation for this relation $a \equiv b \pmod{m}$.
+Otherwise we say, that $a$ is \emph{incongruent to} $b$, or $a \not\equiv b \pmod{m}$.
+
+For a fixed $m > 1$, $a \equiv b \pmod{m}$ defines an equivalence relation over the $\Z$.
+The equivalence classes are called \emph{residue class}es.
+The residue class of $a$ is
+\[
+    \overline{a} = \left\{ a + km : k \in \Z \right\}.
+\]
+Let us denote
+\[
+    \Z_m = \left\{ \overline{0}, \overline{1}, \ldots, \overline{m-1} \right\}
+\]
+the set of residue classes.
+
+\begin{theorem}[The compability of integer operations with the residue classes]
+    \label{th:compability}
+    If $a \equiv b \pmod{m}$ and $c \equiv d \pmod{m}$, then
+    \begin{itemize}
+        \item $a + c \equiv b + d \pmod{m}$ and
+        \item $ac \equiv bd \pmod{m}$.
+    \end{itemize}
+
+    This can be stated on residue class level as well:
+    \begin{enumerate}
+        \item $\overline{a} + \overline{b} = \left\{ a' + b' : a' \in \overline{a}, b' \in \overline{b} \right\} = \overline{a+b}$ and
+        \item $\overline{a} \cdot \overline{b} = \left\{ a'b' : a' \in \overline{a}, b' \in \overline{b} \right\} = \overline{ab}$.
+    \end{enumerate}
+\end{theorem}
+
+Theorem \ref{th:compability} enables us to work on the \emph{residue system} level, i.e. on
+\[
+    \Z_m = \left\{ \overline{0}, \overline{1}, \ldots, \overline{m-1} \right\} \simeq \left\{ 0, 1, \ldots, m-1 \right\}
+\]
+The operations on the residue system can be defined as
+\[
+    a +_m b = (a + b) \bmod m, \quad a \cdot_m b = ab \bmod m.
+\]
+
+\begin{theorem}[Structure of $\Z_m$]
+    Let $m > 1$ and $a \neq 0$.
+    \begin{enumerate}
+        \item If $\gcd(a, m) \neq 1$, then $ax \equiv 0 \pmod{m}$ has non-zero solution.
+        \item If $\gcd(a, m) = 1$, then $ax \equiv 1 \pmod{m}$ has a solution.
+    \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+    \begin{enumerate}
+        \item
+            If $d = \gcd(a, m) > 1$, then
+            \[
+                \frac{a}{d}m = a\frac{m}{d} \equiv 0 \pmod{m},
+            \]
+            so $x = m / d$ is nonzero solution.
+        \item
+            With the extended Euclidean algorithm, we can compute $1 = ax + my$.
+            Rearranging this, we have that $ax - 1 = -ym$. So $m \mid ax - 1$, which is by definition means that $ax \equiv 1 \pmod{m}$.
+    \end{enumerate}
+\end{proof}
+If $ax \equiv 1 \pmod{m}$, then we call $x$ the modular inverse of $a$, denoted by $a^{-1}\pmod{m}$.
+
 \end{document}
