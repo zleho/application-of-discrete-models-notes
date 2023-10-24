@@ -216,7 +216,7 @@ We say that $p$ is an \emph{irreducible element} if $p=ab$ implies that $a$ or $
 If an element is not irreducible, then it is \emph{composite}.
 We call $p$ a \emph{prime element} if $p \mid ab$ implies that $p \mid a$ or $p \mid b$.
 If $p$ is an irreducible element, then it is also a prime element.
-In case of integers, the reverse is also true, i.e. every prime element is irreducible.
+In case of integers, the reverse is also true, i.e.\ every prime element is irreducible.
 
 \begin{theorem}[The Fundamental Theorem of Arithmetic]
     \label{th:fta}
@@ -255,4 +255,118 @@ Let $\pi(x)$ denote the number of positive prime numbers below $x$.
         \lim_{x \to +\infty} \frac{\pi(x)}{x/\ln x} = 1.
     \]
 \end{theorem}
+
+\subsection{Greatest common divisor}
+
+The \emph{greatest common divisor} of $a_1,\ldots,a_n$ elements is $d$, if
+\begin{itemize}
+    \item $d \mid a_i$ for all $i$, i.e.\ $d$ is a common divisor of the elements and
+    \item if $d' \mid a_i$ for all $i$, then $d' \mid d$ that is $d$ is maximal with respect to divisibility.
+\end{itemize}
+From the definition, it is clear that if $d$ is a greatest common divisor and $\varepsilon$ is a unit element, then $\varepsilon d$ is also a greatest common divisor.
+We usually fix a greatest common divisor for integers by nominating the positive one.
+We will use the notation $\gcd \left(a_1,\ldots,a_n \right)$.
+
+From the definition we can see that
+\begin{enumerate}
+    \item $\gcd(a,0)=a$,
+    \item $\gcd(0,0)=0$,
+    \item $\gcd(a,b)=\gcd(b,a)$,
+    \item $\gcd(a, b) = \gcd(a - b, b)$ or in general $\gcd(a-qb, b) = \gcd(a,b)$ for any $q$. Specifically $\gcd(a \bmod b, b) = \gcd(a, b)$.
+\end{enumerate}
+
+From the last property we have that
+\begin{align*}
+    \gcd(a, b) &= \gcd(a \bmod b, b) \\
+               &= \gcd\left(a \bmod b, b \bmod \left(a \bmod b\right)\right) \\
+               &= \gcd\left(\left(a \bmod b\right) \bmod b \bmod \left(a \bmod b\right), b \bmod \left(a \bmod b\right)\right).
+\end{align*}
+Let us define the recurrence relation $r_0 = a$, $r_1 = b$ and $r_{n+2} = r_{n} \bmod r_{n+1}$.
+In this case the equations above become
+\begin{align*}
+    \gcd(r_0, r_1) &= \gcd(r_2, r_1) \\
+                   &= \gcd\left(r_2, r_3\right) \\
+                   &= \gcd\left(r_4, r_3\right).
+\end{align*}
+We can swap the arguments of $\gcd$, so
+\begin{align*}
+    \gcd(r_0, r_1) &= \gcd(r_1, r_2) \\
+                   &= \gcd\left(r_2, r_3\right) \\
+                   &= \gcd\left(r_3, r_4\right)
+\end{align*}
+The sequence in strictly decreasing, that is $r_n > r_{n+1}$ and $r_{n} \ge 0$ from $n=2$.
+This means that there is an index $N$ such that $r_N = 0$, but $r_{N-1} > 0$.
+From the properties and definition of recurrence relation it is clear, that
+\[
+    \gcd(a, b) = \gcd(r_{N-1}, 0) = r_{N-1}.
+\]
+
+The argument above gives the \emph{Euclidean algorithm} in recursive form:
+\begin{algorithm}
+    \caption{Recursive Euclidean algorithm}
+    \label{alg:recursive-gcd}
+    \begin{algorithmic}[1]
+        \Procedure{GCD}{$a$, $b$}
+            \If{$b = 0$}
+                \State \textbf{return} a
+            \EndIf
+            \State \textbf{return} \Call{GCD}{$b$, $a \bmod b$}
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+We can transform the recursion into a loop.
+At any given step, we only need $r_{n}$ and $r_{n+1}$ to produce $r_{n+2}$.
+\begin{algorithm}
+    \caption{Iterative Euclidean algorithm}
+    \label{alg:iterative-gcd}
+    \begin{algorithmic}[1]
+        \Procedure{GCD}{$a$, $b$}
+            \State $r_{\mathrm{old}},\ r_{\mathrm{new}} \gets a,\ b$
+            \While{$r_{\mathrm{new}} \neq 0$}
+                \State $r_{\mathrm{old}},\ r_{\mathrm{new}} \gets r_{\mathrm{new}},\ r_{\mathrm{old}} \bmod r_{\mathrm{new}}$
+            \EndWhile
+            \State \textbf{return} $r_{\mathrm{old}}$
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+For later applications we not only need the $\gcd(a, b) = d$ but two additional elements $x$ and $y$, such that
+\[
+    d = ax + by.
+\]
+We can extend Euclidean algorithm to calculate $x$ and $y$.
+For this, we are going to ensure that during the algorithm we are updating producing $x_n$ and $y_n$ for each $r_n$, such that
+\[
+    r_n = ax_n + by_n.
+\]
+This will be our loop invariant property, i.e.\ this property will be true for $n$ and $n+1$ whenever we enter the body of the loop and we will make sure that it is true for $n+2$ after the last statement of the body.
+Before the first execution of the loop body, the values $x_0 = 1$, $y_0 = 0$, $x_1 = 0$ and $y_0 = 1$ will suffice.
+Let $q = \left\lfloor r_n / r_{n+1} \right\rfloor$. During the body of the loop we have that
+\begin{align*}
+    r_{n+2} &= r_n \bmod r_{n+1} \\
+            &= r_n -  q r_{n+1} \\
+            &= \left(a x_n + b y_n\right) -q\left(a x_{n+1} + b y_{n+1}\right) \\
+            &= a\left(x_n - q x_{n+1}\right) + b\left(y_n - q y_{n+1}\right),
+\end{align*}
+so $x_{n+2} = x_n - q x_{n+1}$ and $y_{n+2} = y_n - q y_{n+1}$ will work.
+Again, we only need tha last two value of $x$ and $y$ during the calculations.
+We call the procedure \emph{Extended Euclidean algorithm}:
+\begin{algorithm}
+    \caption{Extended Euclidean algorithm}
+    \label{alg:extended-gcd}
+    \begin{algorithmic}[1]
+        \Procedure{GCD}{$a$, $b$}
+            \State $r_{\mathrm{old}},\ x_{\mathrm{old}},\ y_{\mathrm{old}} \gets a,\ 1,\ 0$
+            \State $r_{\mathrm{new}},\ x_{\mathrm{new}},\ y_{\mathrm{new}} \gets b,\ 0,\ 1$
+            \While{$r_{\mathrm{new}} \neq 0$}
+                \State $r_{\mathrm{old}},\ q,\ r_{\mathrm{new}} \gets r_{\mathrm{new}},\ \divmod{r_{\mathrm{old}}}{r_{\mathrm{new}}}$
+                \State $x_{\mathrm{old}},\ x_{\mathrm{new}} \gets x_{\mathrm{new}},\ x_{\mathrm{old}} - q x_{\mathrm{new}}$
+                \State $y_{\mathrm{old}},\ y_{\mathrm{new}} \gets y_{\mathrm{new}},\ y_{\mathrm{old}} - q y_{\mathrm{new}}$
+            \EndWhile
+            \State \textbf{return} $r_{\mathrm{old}},\ x_{\mathrm{old}},\ y_{\mathrm{old}}$
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
 \end{document}
