@@ -556,7 +556,7 @@ The probability of false positive response $p < \frac{1}{4}$. If we repeat the t
         \Procedure{MillerRabin}{$n$}
             \State Compute integers $s, q$ such that $n-1=2^s q$ and $q$ is odd.
             \State Select $a \in_R \left \{ 2,\ldots,n-2 \right \}$.
-            \State $x \gets a^q \mod n$
+            \State $x \gets a^q \mod n$ \Comment{Use fast modular exponentiation}
             \If{$x=1$}
                 \State \textbf{return} probably prime
             \EndIf
