@@ -520,4 +520,56 @@ In summary, if the canonical form of $1 < n = p_1^{\alpha_1}\cdots p_r^{\alpha_r
 \begin{theorem}[Euler-Fermat]
     If $1 < n \in Z$ and $gcd(a,n) = 1$ for $a \in Z$, then $a^{\varphi(n)} \equiv 1 \pmod{n}$.
 \end{theorem}
+
+\section{Probabilistic primality testing}
+
+If $p$ is a prime number, then for any $1 < a < n-1$, due to Euler-Fermat Theorem $a^{p-1} \equiv 1 \pmod{p}$.
+This statement is known as \emph{Fermat's little theorem} and we can use it as primality testing for $n > 2$ odd integer:
+\begin{enumerate}
+    \item Select randomly $a \in_R \left \{ 2, \ldots, n-2 \right \}$.
+    \item If $\gcd(a,n)=1$ and $a^{n-1} \equiv 1 \pmod{n}$, then $n$ is probably a prime number. Otherwise it is composite.
+\end{enumerate}
+
+There are examples of such composite numbers $n$ that for every base $a$, where $\gcd(a,n)=1$ the property $a^{n-1} \equiv 1 \pmod{n}$ still holds.
+These are called \emph{Carmichael numbers} and there are infinitely many of them.
+
+We can use additional properties for further testing.
+
+\begin{theorem}
+    A positive integer $p$ is a prime number if and only if the only solutions of $x^2 \equiv \pmod{p}$ are $x \equiv \pm 1 \pmod{m}$.
+    On the residue system level this means that $p$ is a prime number if and only if in $\Z_p$ the square roots of $1$ are $1$ and $p-1$.
+\end{theorem}
+
+Let $n-1 = 2^s q$, where $q$ is odd. Combining Fermat's little theorem and the previous property of prime numbers, the sequence
+\[
+    a^{2^s q} \mod n, a^{2^{s-1} q} \mod n, \ldots, a^q \mod n
+\]
+must start with at least one 1 and if there are any elements not equal to 1, the first such element must be $n-1$.
+
+Based on these arguments we arrive the Miller-Rabin primality testing algorithm.
+
+\begin{algorithm}
+    \caption{Miller-Rabin probabilistic primality test}
+    \label{alg:miller-rabin}
+    \begin{algorithmic}[1]
+        \Procedure{MillerRabin}{$n$}
+            \State Compute integers $s, q$ such that $n-1=2^s q$ and $q$ is odd.
+            \State Select $a \in_R \left \{ 2,\ldots,n-2 \right \}$.
+            \State $x \gets a^q \mod n$
+            \If{$x=1$}
+                \State \textbf{return} probably prime
+            \EndIf
+            \For{$k=0,\ldots,s-1$}
+                \If{$x = n - 1$}
+                    \State \textbf{return} probably prime
+                \EndIf
+                \State $x \gets x^2 \mod n$.
+            \EndFor
+            \State \textbf{return} composite
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+The probability of false positive response $p < \frac{1}{4}$. If we repeat the trial $k$ times independently, then $p < \frac{1}{4^k}$.
+
 \end{document}
