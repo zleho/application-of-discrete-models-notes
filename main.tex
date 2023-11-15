@@ -495,4 +495,29 @@ where $a, b \in \Z$ and $0 < c,d \in Z$.
 
 We can extend this method for solving more than two equations by replacing two of them with the common solution calculated with the help of previous theorem.
 
+\subsection{Euler's totient function}
+
+For $0 < n \in \Z$ we can define \emph{Euler's totient function} as
+\[
+    \varphi(n)  = \left \lvert \left \{ a \in \Z : 1 \le a \le n, \gcd(a,n) = 1 \right \} \right \rvert.
+\]
+
+If $p$ is a positive prime number, then $\varphi(p) = p - 1$.
+
+If $1 < k \in Z$, then $\gcd(a, p^k) > 1$ means that $p \mid a$ for integers $1 \le a \le p^k$.
+This means that $a = p, 2p, \dots, p^{k-1}p$. Due to this reasoning, we have that
+\[
+    \varphi\left( p^k \right) = p^k - p^{k-1} = p^k \left( 1 - \frac{1}{p} \right).
+\]
+
+If $\gcd(n,m)=1$, then $\varphi(nm) = \varphi(n)\varphi(m)$. This last statement is the consequence of CRT.
+
+In summary, if the canonical form of $1 < n = p_1^{\alpha_1}\cdots p_r^{\alpha_r}$, then
+\[
+    \varphi(n) = n \prod_{1}^{r} \left( 1 - \frac{1}{p_i} \right).
+\]
+
+\begin{theorem}[Euler-Fermat]
+    If $1 < n \in Z$ and $gcd(a,n) = 1$ for $a \in Z$, then $a^{\varphi(n)} \equiv 1 \pmod{n}$.
+\end{theorem}
 \end{document}
