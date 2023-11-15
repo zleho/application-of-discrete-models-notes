@@ -547,6 +547,7 @@ Let $n-1 = 2^s q$, where $q$ is odd. Combining Fermat's little theorem and the p
 must start with at least one 1 and if there are any elements not equal to 1, the first such element must be $n-1$.
 
 Based on these arguments we arrive the Miller-Rabin primality testing algorithm.
+The probability of false positive response $p < \frac{1}{4}$. If we repeat the trial $k$ times independently, then $p < \frac{1}{4^k}$.
 
 \begin{algorithm}
     \caption{Miller-Rabin probabilistic primality test}
@@ -569,7 +570,5 @@ Based on these arguments we arrive the Miller-Rabin primality testing algorithm.
         \EndProcedure
     \end{algorithmic}
 \end{algorithm}
-
-The probability of false positive response $p < \frac{1}{4}$. If we repeat the trial $k$ times independently, then $p < \frac{1}{4^k}$.
 
 \end{document}
