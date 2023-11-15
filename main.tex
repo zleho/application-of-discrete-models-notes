@@ -468,4 +468,31 @@ If $d = ax'+my'$, then $x_0=x's$ and the general solutions have the form of $x =
 We know that $x \equiv x + m \pmod{m}$ and for every $1 < n < m$, $x \not \equiv x+n \pmod{m}$.
 This means if $1 < k\frac{m}{d} < m$, then $x \not\equiv x+k\frac{m}{d} \pmod{m}$.
 So we can list all the different solutions $\pmod{m}$ with $k=0,\ldots,d-1$.
+
+\subsection{Solving systems of linear congruence relations}
+
+No we are searching for common integer solution of the following two linear congruence equations
+\[
+    z \equiv a \pmod{c}, \quad z \equiv b \pmod{d},
+\]
+where $a, b \in \Z$ and $0 < c,d \in Z$.
+
+\begin{theorem}[Chinese Remainder Theorem (CRT)]
+    If $\gcd(c,d)=1$, then the system above has a solution and the solution is unique $\pmod{cd}$.
+\end{theorem}
+
+\begin{proof}
+    We only prove the existence.
+
+    With extended Euclidean algorithm we can compute $cx + dy = 1$.
+    If we let $z = bcx + ady$, then
+    \[
+        bcx + ady \equiv 0 + ady \equiv ady \equiv a \pmod{c},
+    \]
+    since $c \mid bcx$ and $y=d^{-1} \pmod{c}$.
+    The other congruence relation can proven in the same way.
+\end{proof}
+
+We can extend this method for solving more than two equations by replacing two of them with the common solution calculated with the help of previous theorem.
+
 \end{document}
