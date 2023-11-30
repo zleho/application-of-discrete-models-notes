@@ -521,7 +521,7 @@ In summary, if the canonical form of $1 < n = p_1^{\alpha_1}\cdots p_r^{\alpha_r
     If $1 < n \in Z$ and $gcd(a,n) = 1$ for $a \in Z$, then $a^{\varphi(n)} \equiv 1 \pmod{n}$.
 \end{theorem}
 
-\section{Probabilistic primality testing}
+\subsection{Probabilistic primality testing}
 
 If $p$ is a prime number, then for any $1 < a < n-1$, due to Euler-Fermat Theorem $a^{p-1} \equiv 1 \pmod{p}$.
 This statement is known as \emph{Fermat's little theorem} and we can use it as primality testing for $n > 2$ odd integer:
@@ -570,5 +570,91 @@ The probability of false positive response $p < \frac{1}{4}$. If we repeat the t
         \EndProcedure
     \end{algorithmic}
 \end{algorithm}
+
+\subsection{Discrete logarithm problem}
+
+Let us fix a prime number $p$. We will denote the nonzero elements of $\Z_p$ with $\Z_p^*$.
+The \emph{(multiplicative) order} of $a \in \Z_p^*$, denoted by $\mathrm{ord}_p(a)$ is defined by
+\[
+    \mathrm{ord}_p(a) = \min\left\{ 0 < n \in \Z : a^{n} \mod p = 1 \right\}.
+\]
+
+Due to Fermat's little theorem ($a^{p-1} \mod p = 1$), the order of $a$ always exists and $\mathrm{ord}_p(a) \le p-1$.
+If $a^i \mod p = a^j \mod p$ with $i > j$, then $a^{i-j} \mod 1$. This means $\mathrm{ord}_p(a) \le i-j$.
+From this, we can see that if $\mathrm{ord}_p(a) = n$, then the elements $a, a^2, \ldots, a^n$ are all different.
+If the order the element $g$ is maximal, i.e. $\mathrm{ord}_p(g) = p - 1$, then $\Z_p^* = \left\{ g, g^2, \ldots, g^{p-1} \right\}$.
+In this case we call $g$ a \emph{generator} element of $Z_p^*$.
+
+Let $g$ be a generator element of $\Z_p^*$, $k \mid p-1$ with $0 < k < p-1$ and $p-1 = kn$ for some $n$ integer.
+In this case $g^{p-1} \mod p = (g^k)^n \mod p = 1$ and $g^k \mod p \neq 1$.
+If $s \mid k$, then $s \mid p-1$, so $g^s \mod p \neq 1$ as well.
+
+This reasoning gives us the following way of testing whether an element $g$ is generator or not:
+If $k$ is a maximal proper divisor of $p-1$ ($k$ does not divide any other factor of $p-1$), then $g^k \mod p \neq 1$.
+If the canonical form of $p-1 = p_1^{\alpha_1}\cdots p_r^{\alpha_r}$, then the maximal divisors of $p-1$ are
+\[
+    \frac{p-1}{p_i} \qquad i=1,\ldots,r.
+\]
+
+We call $p$ a \emph{Sophie Germain prime}, if it is a prime number and $p=2q+1$, where $q$ is also a prime number.
+In this case the it is enough to test $g^2 \mod \neq = 1$ and $g^{q} \neq 1$.
+
+Let $b \in \Z_p^*$, $0 \le k \le p-1$ and $a = b^k \mod p$.
+In this case the \emph{discrete logarithm} or \emph{index} of $a$ in base $b$ in $\Z_p^*$ is $k$.
+The notation is $\log_b a = k$ or $\mathrm{ind}_b a = k \pmod{p}$.
+
+The discrete logarithm problem (DLP) is to find $k$ from $b$ and $a$.
+Currently there is no efficient algorithm known to compute $k$.
+
+\subsubsection{Diffie-Hellman key exchange}
+
+Let us fix a large Sophie Germain prime number $p$ and search for a generator element $g$.
+Alice secretly selects $1 \le a \le p-1$ and Bob does the same with $1 \le b \le p-1$.
+Alice computes $A = g^a \mod p$ and Bob computes $B = g^b \pmod p$.
+They share $A$ and $B$ between each other.
+Alice computes $B^a \pmod p$, Bob computes $A^b \pmod p$.
+Since
+\[
+    B^a = (g^b)^a = g^{ba} = g^{ab} = (g^a)^b = A^b,
+\]
+they have common secret key.
+The security of the key exchange depends on that we assume DLP cannot be solved efficiently.
+
+\section{RSA}
+
+Let us fix two large prime numbers, $p$ and $q$ and calculate their product $n=pq$.
+Also search for such integers $e$ and $d$ such that $ed \equiv 1 \mod \varphi(n)$, i.e. $ed = k(p-1)(q-1) + 1$ for some $k \in Z$.
+We can make $n$ and $e$ public and keep $p$, $q$ and $d$ private.
+If $0 < m < n$ and $c = m^e \mod n$, then
+\[
+    c^d = (m^e)^d = m^{ed} = m^{k(p-1)(q-1)+1} = (m^{p-1})^{k(q-1)}m \equiv m \pmod{p},
+\]
+since $m^{p-1} \equiv 1 \pmod{p}$. By the same argument we have that $m \equiv c^d \pmod{q}$.
+We can solve this system with the Chinese remainder theorem and the solution is $m = c^d \mod n$.
+
+Let $d_p = d \mod (p-1)$ and $d = k(p-1) + d_p$. In this case
+\[
+    c^d = c^{k(p-1)+d_p} = (c^{p-1})^k c^{d_p} \equiv c^{d_p} \pmod{p}.
+\]
+Also if $d_q = d \mod (q-1)$, then $c^d \equiv c^{d_q} \pmod{q}$.
+Let $m_1 = c^{d_p} \mod p$ and $m_2 = c^{d_q} \pmod q$.
+In this case if $m$ solves the system
+\[
+    m \equiv m_1 \pmod{p}, \qquad m \equiv m_2 \pmod{q},
+\]
+then $m$ solves the original problem.
+
+Let us search for the solution tin the form of $m=m_2 + hq$.
+In this case $m \equiv m_2 \pmod{q}$.
+If $m_2 + hq \equiv m_1 \pmod{m}$, then $hq \equiv m_1 - m_2 \pmod{p}$.
+Let us denote $q_{\mathrm{inv}}=q^{-1} \pmod{p}$.
+In this case with $h = q_{\mathrm{inv}}(m_1 - m_2) \mod p$, then $m$ solves the system.
+
+The security of RSA stands on the assumption that the factorization of $n$ into $p$ and $q$ cannot be done efficiently.
+Due to this fact calculating $\varphi(n)$ without knowing $p$ and $q$ is hard as well.
+This means that even by knowing $e$, it is hard to compute $d$.
+
+We can use RSA to sign messages digitally.
+If $\sigma = m^d \pmod n$, then we can check the signature of the the $m, \sigma$ pair by checking that $m \equiv \sigma^e \pmod{n}$.
 
 \end{document}
