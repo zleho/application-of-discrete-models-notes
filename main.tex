@@ -676,7 +676,7 @@ Sometimes we consider the polynomials as infinite sums of terms, where the coeff
     f = f_0 + f_1 x + f_2 x^2 + \cdots + f_n x^n + 0x^{n+1} + 0x^{n+1} + \cdots
 \]
 
-Since we can map every $F \ni c \to c + 0x + 0x^s + \cdots$, every constant is a polynomial also.
+Since we can map every $F \ni c \mapsto c + 0x + 0x^s + \cdots$, every constant is a polynomial also.
 We can write $x = 0 + 1x + 0x^2 + \cdots$, therefore $x \in F[x]$.
 
 The \emph{degree} of $f$ is defined by
@@ -774,5 +774,30 @@ Some things to consider:
     \item The CRC polynomial $x+1$ is the parity check method. If $x + 1 \mid g$, then CRC detects all odd number of errors.
     \item All burst error of $n$ bits is detected a polynomial with $g_0 = 1$ and $\mathrm{deg}(g) \ge n$.
 \end{itemize}
+
+\subsection{Number Theory of $F[x]$}
+
+$F[x]$ behaves just like $\Z$ so we can define divisibility.
+The units of $F[x]$ are the nonzero constant polynomials, since $F[x] \ni f = cg$ with $g_k = f_k c^{-1}$.
+The associated elements of $f$ are $cf$ for $0 \neq c \in F$.
+The irreducible and prime elements of $F[x]$ are the same. The fundamental theorem of arithmetic can be stated for polynomials as well.
+We can write every polynomial of $F[x]$ as uniquely as product of irreducible polynomials, i.e. 
+\[
+    f = f_n\left(g^{(1)}\right)^{\alpha_1}\cdots \left(g^{(r)}\right)^{\alpha_r},
+\]
+where $g^{(i)} \in F[x]$ is irreducible, with main coefficient of $1$, $0 < \alpha_i \in \Z$ for $i=1,\ldots,r$.
+
+Polynomials have greatest common divisor, we can distinguish one by taking the one with main coefficient of $1$.
+Extended Euclidean algorithms works for polynomials.
+
+We can define congruence relation with a fixed modulus non-constant $m \in F[x]$.
+We can distinguish a unique element from every residue class with degree less than $\mathrm{deg}(m)$.
+These elements form the residue system $F[x]_m$.
+
+The structure of $F[x]_m$ is the same as with $\Z_m$.
+If $\gcd{a}{n}=1$, then $a$ has modular inverse which can be computed with extended Euclidean algorithm.
+
+If $m$ is irreducible, then every non-zero element in $F[x]_m$ has a modular inverse, so $F[x]_m$ is a field.
+
 
 \end{document}
