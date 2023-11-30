@@ -835,8 +835,42 @@ If $0 \neq f \in F[x]$, $1 \le n \in \Z$. The $c$ is the root of $f$ \emph{multi
     \]
     and $f = \sum_{j=0}^n d_j l_j$.
 \end{theorem}
+
 \subsection{Irreducible polynomials}
+
+\begin{theorem}{The Fundamental Theorem of Algebra}
+    If $1 \le n \in \Z$, $f \in \mathbb{C}[x]$ with $\mathrm{deg}(f) = n$, then there exists $c\in\mathbb{C}$ such that $f(c) = 0$.
+\end{theorem}
+
+The irreducible polynomials of $\mathbb{C}[x]$ exactly the linear polynomials.
+
+The irreducible polynomials of $\mathbb{R}[x]$ are the linear polynomials and such quadratic polynomials that do not have real root, for. e.g. $x^2 + 1$.
+
+If $p$ is a prime number and $1 \le n \in \Z$, then $x^n + p \in \mathbb{Q}[x]$ is irreducible.
+
+For every $1 \le n \in \Z$, there exists $f \in \Z_p[x]$ such that $f$ is irreducible.
+
 \subsection{Field extensions}
+
+Given and irreducible polynomial $m \in F[x]$, $F[x]_m$ is a field.
+
+Let $F=\mathbb{R}$ and $m = x^2 + 1$. In this case the elements of the residue system are $ax+b$ for $a,b \in \mathbb{R}$.
+Now the product of two elements $\pmod{x^2 + 1}$ is
+\begin{align*}
+    (ax + b)(cx + d) \mod x^2 + 1 = &= ac + (bc+ad)x + bdx^2 \mod x^2 + 1 \\
+                                    &= ac + (bc+ad)x + bdx^2 - bdx^2 - bd \\
+                                    &= (ac - bd) + (bc + ad)x.
+\end{align*}
+This means that $\mathbb{R}[x]_{x^2 + 1} \cong \mathbb{C}$.
+
+For $\Z_p[x]_m$ with irreducible $m$ with degree of $n$, the residue systems consists of the elements
+\[
+    f = f_0 + f_1 x + f_2 x^2 + \cdots + f_{n-1} x^{n-1},
+\]
+with $f_i \in \Z_p$. So there are $p^n$ elements in $\Z_p[x]_m$. It does not matter which irreducible $m$ we select, they will yield the same fields.
+
+All the finite fields are formed this way, we denote them by $\mathbb{F}_q = GF(q)$ with $q=p^n$.
+
 \subsection{Secret sharing}
 \subsection{Error correction wih polynomials}
 
