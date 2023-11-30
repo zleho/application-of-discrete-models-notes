@@ -9,7 +9,6 @@
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand*{\divmod}[2]{\mathbf{divmod}\left( #1, #2 \right)}
 \newcommand{\nmid}{\hspace{-4pt}\not|\hspace{2pt}}
-
 \newtheorem{theorem}{Theorem}
 
 \begin{document}
@@ -656,5 +655,124 @@ This means that even by knowing $e$, it is hard to compute $d$.
 
 We can use RSA to sign messages digitally.
 If $\sigma = m^d \pmod n$, then we can check the signature of the the $m, \sigma$ pair by checking that $m \equiv \sigma^e \pmod{n}$.
+
+
+\section{Polynomials over Fields}
+
+Our main requirement from a field $F$ is that the linear equation $ax=b$ with $a, b \in F$, $a\neq 0$ has a solution $x \in F$.
+We calculate the solution by cancelling $a$, i.e. $x=a^{-1}b$, where $a^{-1}$ is the multiplicative inverse of $a$.
+
+The main examples of fields are $\mathbb{C}, \mathbb{R}, \mathbb{Q}$ and $\Z_p$ for prime $p$.
+
+Informally, we can think of a polynomial as an expression in the form of
+\[
+    f = f_0 + f_1 x + f_2 x^2 + \cdots + f_n x^n.
+\]
+Here $f$ is the \emph{polynomial}, $f_i$ is a \emph{coefficient}, $f_i x^i$ is a \emph{term}, $f_0$ term is the \emph{constant term} and $f_n$ is the \emph{main coefficient}.
+We call $x$ the indeterminate variable. If the coefficients are all from the field $F$, then $f$ is a polynomial over the field $F$.
+The set of all polynomials over $F$ is denoted by $F[x]$. 
+Sometimes we consider the polynomials as infinite sums of terms, where the coefficients are zero after $f_n \neq 0$, i.e.
+\[
+    f = f_0 + f_1 x + f_2 x^2 + \cdots + f_n x^n + 0x^{n+1} + 0x^{n+1} + \cdots
+\]
+
+Since we can map every $F \ni c \to c + 0x + 0x^s + \cdots$, every constant is a polynomial also.
+We can write $x = 0 + 1x + 0x^2 + \cdots$, therefore $x \in F[x]$.
+
+The \emph{degree} of $f$ is defined by
+\[
+    \mathrm{deg}(f) = \begin{cases}
+        -1, & f = 0 \\
+        0, & f = c \in F, c \neq 0 \\
+        n, & f_n \neq 0, f_{n+k} = 0, 0 < k \in \Z.
+    \end{cases}
+\]
+In some sense, we can say that if the degree of polynomial is greater than the degree of another, then the first one is "larger".
+
+\subsection{Operations of $F[x]$}
+
+We work with polynomials as expression, we can add and multiply them.
+Since we can identify a polynomial with its list of coefficients, we must determine the coefficients of the result of addition and multiplication from the coefficients of the operands.
+
+Let 
+\[
+    f = f_0 + f_1 x + \cdots + f_n x^n,
+\]
+and
+\[
+    g = g_0 + g_1 x + \cdots + g_m x^m + 0x^{m+1} + \cdots 0x^n.
+\]
+
+\paragraph{Addition}
+After collecting the term $h_k x^k$ with $h=f+k$, we have that $h_k x^k = f_k x^k + g_k x^k$, so $h_k = f_k + g_k$.
+For the degree of $f+g$ we have that $\mathrm{deg}(f+g) \le \max \{ \mathrm{deg}(f), \mathrm{deg}(g) \}$.
+
+\paragraph{Multiplication}
+Again, we collect the term $h_k x^k$ with $h = fg$. We have that
+\[
+    h_k x^k = f_0 g_k x^k + f_1 x g_{k-1} x^{k-1} + \cdots + f_k x^k g_0,
+\]
+so
+\[
+    h_k = \sum_{i=0}^k f_i g_{k-i} = \sum_{j=0}^k f_{k-j} g_j = \sum_{i+j=k} f_j g_j.
+\]
+The degree of $fg$ is $\mathrm{deg}(f) + \mathrm{deg}(g)$.
+
+\begin{theorem}{Euclidean divison in $F[x]$}
+    If $f, g \in F[x]$ with $g \neq 0$, then there exists a unique pair $q,r \in F[x]$ such that $f = qg + r$ with $\mathrm{deg}(r) < \mathrm{deg}(g)$.
+\end{theorem}
+\begin{proof}
+    We only prove the existence. Let $n = \mathrm{deg}(f)$ and $m = \mathrm{deg}(g)$. If $n < m$, then $q=0$, $r=f$ works.
+    
+    Otherwise for the polynomial $f^* = f - f_n g_m^{-1}x^{n-m} g$ we have that $\mathrm{deg}(f^*) < \mathrm{deg}(f)$.
+    We repeat this process until $r = \mathrm{deg}(f^*) < m$ and record $f_n g_m^{-1}x^{n-m}$ into $q$.
+\end{proof}
+
+\subsection{Error detection with polynomials over $\Z_2$}
+
+We want to send the bits $b_0 b_1 \ldots b_{k-1}$ over a noisy channel.
+We assume that we receive the same number of bits, but the values might change.
+On the receiver's end we want to be able to detect any error in communication.
+For this reason we introduce redundant information $r_0 r_1 \ldots r_{m-1}$ into our bits.
+
+The simples case is introducing only one bit.
+Let
+\[
+    r_0 = \sum_{i=0}^{k-1} b_i \mod 2.
+\]
+If we send $r_0 b_1 \ldots b_{k-1}$, then we always send even number of bits that are set to $1$.
+We reject the received message if there are odd number of bits to to $1$ in it.
+This method is called \emph{parity check}, $r_0$ is the \emph{parity bit}.
+This simplest form of error detection method is able to detect all such errors where odd number of bits are flipped.
+But it is incapable to detect even number of errors.
+
+We can think of the bits $b_0 b_1 \dots b_{k-1}$ as the coefficients of the polynomial
+\[
+    b = b_0 + b_1 x + \cdots b_{k-1} x^{k-1} \in \Z_2[x].
+\]
+If we denote $r_0 r_1 \ldots r_{m-1} b_0 \ldots b_{k-1}$ with $r||b$, then
+\[
+    r||b = r_0 + r_1 x + \cdots r_{m-1} x^{m-1} b_0 x^{m} + \cdots b_{k-1} x^{k-1 + m} = r + bx^m.
+\]
+
+If $g \in \Z_2[x]$ with $\mathrm{deg}(g) = m$, then we can write $b x^m = qg + r$ where $\mathrm{deg}(r) < m$.
+From this we, have $b x^m - r = qg$, so $g \mid b x^m - r$. But in $\Z_2[x]$, the polynomials $b x^m - r$ and $b x^m + r$ are the same.
+If we send the coefficients of $b x^m + r$, then on the receiver's end we can check if $g \mid b x^m + r$ still stands.
+
+This error detection method is called \emph{Cyclic redundancy check} or \emph{CRR} and $g$ is a \emph{CRC polynomial}.
+
+\subsubsection{Designing CRC polynomials}
+
+We can think of the error of the transmission $e$ as a polynomial over $\Z_2$.
+So we receive $bx^m + r + e$. To be able to detect the error, we must design $g$ such that $g \nmid e$.
+Some things to consider:
+\begin{itemize}
+    \item The degree of $g$ influences the error detection capabilities, for e.g. the length of messages that can be sent in one go.
+    \item In case of one bit error, we have that $e=x^s$. If $g$ has at least two bits set, i.e. $x^i + x^j \mid g$, then $g \nmid x^s$.
+    \item Two bit errors can written as $x^i + x^j = x^i(1 + x^j)$. We have already covered the $x^i$ term.
+          To protect against $(1 + x^j)$ we should make $1 + x^k \mid g$ with as big $k$ as possible.
+    \item The CRC polynomial $x+1$ is the parity check method. If $x + 1 \mid g$, then CRC detects all odd number of errors.
+    \item All burst error of $n$ bits is detected a polynomial with $g_0 = 1$ and $\mathrm{deg}(g) \ge n$.
+\end{itemize}
 
 \end{document}
