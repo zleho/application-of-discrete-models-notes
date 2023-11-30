@@ -799,5 +799,45 @@ If $\gcd{a}{n}=1$, then $a$ has modular inverse which can be computed with exten
 
 If $m$ is irreducible, then every non-zero element in $F[x]_m$ has a modular inverse, so $F[x]_m$ is a field.
 
+\subsection{Roots of Polynomials}
+
+If $f \in F[x]$ and $r \in F$ then we can define the mapping $r \mapsto f(r) = \sum_{i=0}^n f_i r^i$.
+This is the \emph{polynomial function} defined by the polynomial $f$.
+We denote the function by $\hat{f}$.
+
+Note that $x, x^p \in \Z_p[x]$ are different polynomials, but $r^p \equiv r \pmod{p}$ so they share the same polynomial function.
+
+If for $c \in F$ we have that $f(c) = 0$, then we call $c$ the \emph{root} of $f$.
+
+\begin{theorem}
+    If $0 \neq f \in F[x]$, $c \in F$ and $f(c) = 0$, then $x-c \mid f$.
+\end{theorem}
+\begin{proof}
+    With Euclidean division we can write $f=(x-c)q + r$.
+    Since $\mathrm{deg}(r) < \mathrm{deg}(x-c) = 1$, we have that $r=c' \in F$.
+    But $0 = f(c) = (c-c)q + c'$, so $c'=0$.
+\end{proof}
+
+This theorem has the following consequences:
+\begin{enumerate}
+    \item If $0 \neq f \in F[x]$, then $f$ has at most $\mathrm{deg}(f)$ roots.
+    \item If the polynomial functions of $f,g \in F[x]$ with $\mathrm{deg}(f), \mathrm{deg}(g) \le n$ agree on $n+1$ points, then $f=g$. Otherwise $f-g$ would have $n+1$ roots.
+    \item If $F$ is infinite, then two polynomials cannot share a polynomial function. Otherwise the difference polynomial would have infinite roots.
+\end{enumerate}
+
+If $0 \neq f \in F[x]$, $1 \le n \in \Z$. The $c$ is the root of $f$ \emph{multiplicity} of $n$ if $(x-c)^n \mid f$, but $(x-c)^{n+1} \nmid f$.
+
+\begin{theorem}{Lagrange interpolation}
+    If $c_0,c_1,\ldots,c_n \in F$ are different and $d_0,d_1,\ldots,d_n \in F$, then there is a unique $f\in F[x]$ such that $f(c_j) = d_j$ for $j=0,\ldots,n$.
+    The $j$-th Lagrange base polynomial of the points $c_0,c_1,\ldots,c_n$ is defined by
+    \[
+        l_j = \frac{\prod_{i \neq j} (x - c_j)}{\prod_{i \neq j} (c_i - c_j)},
+    \]
+    and $f = \sum_{j=0}^n d_j l_j$.
+\end{theorem}
+\subsection{Irreducible polynomials}
+\subsection{Field extensions}
+\subsection{Secret sharing}
+\subsection{Error correction wih polynomials}
 
 \end{document}
