@@ -520,6 +520,10 @@ In summary, if the canonical form of $1 < n = p_1^{\alpha_1}\cdots p_r^{\alpha_r
     If $1 < n \in Z$ and $gcd(a,n) = 1$ for $a \in Z$, then $a^{\varphi(n)} \equiv 1 \pmod{n}$.
 \end{theorem}
 
+\begin{theorem}[Fermat's little theorem]
+    If $1 < p \in Z$ is a prime number and $a \in Z$, then $a^{p} \equiv a \pmod{p}$. If in addition $p \nmid a$, then $a^{p-1} \equiv 1 \pmod{p}$.
+\end{theorem}
+
 \subsection{Probabilistic primality testing}
 
 If $p$ is a prime number, then for any $1 < a < n-1$, due to Euler-Fermat Theorem $a^{p-1} \equiv 1 \pmod{p}$.
@@ -596,7 +600,7 @@ If the canonical form of $p-1 = p_1^{\alpha_1}\cdots p_r^{\alpha_r}$, then the m
 \]
 
 We call $p$ a \emph{Sophie Germain prime}, if it is a prime number and $p=2q+1$, where $q$ is also a prime number.
-In this case the it is enough to test $g^2 \mod \neq = 1$ and $g^{q} \neq 1$.
+In this case the it is enough to test $g^2 \mod p \neq 1$ and $g^{q} \mod p \neq 1$.
 
 Let $b \in \Z_p^*$, $0 \le k \le p-1$ and $a = b^k \mod p$.
 In this case the \emph{discrete logarithm} or \emph{index} of $a$ in base $b$ in $\Z_p^*$ is $k$.
@@ -795,7 +799,7 @@ We can distinguish a unique element from every residue class with degree less th
 These elements form the residue system $F[x]_m$.
 
 The structure of $F[x]_m$ is the same as with $\Z_m$.
-If $\gcd{a}{n}=1$, then $a$ has modular inverse which can be computed with extended Euclidean algorithm.
+If $\gcd(a,n)=1$, then $a$ has modular inverse which can be computed with extended Euclidean algorithm.
 
 If $m$ is irreducible, then every non-zero element in $F[x]_m$ has a modular inverse, so $F[x]_m$ is a field.
 
@@ -846,7 +850,7 @@ The irreducible polynomials of $\mathbb{C}[x]$ exactly the linear polynomials.
 
 The irreducible polynomials of $\mathbb{R}[x]$ are the linear polynomials and such quadratic polynomials that do not have real root, for. e.g. $x^2 + 1$.
 
-If $p$ is a prime number and $1 \le n \in \Z$, then $x^n + p \in \mathbb{Q}[x]$ is irreducible.
+If $p$ is a prime number and $1 \le n \in \Z$, then $x^n - p \in \mathbb{Q}[x]$ is irreducible.
 
 For every $1 \le n \in \Z$, there exists $f \in \Z_p[x]$ such that $f$ is irreducible.
 
