@@ -875,7 +875,107 @@ with $f_i \in \Z_p$. So there are $p^n$ elements in $\Z_p[x]_m$. It does not mat
 
 All the finite fields are formed this way, we denote them by $\mathbb{F}_q = GF(q)$ with $q=p^n$.
 
-\subsection{Secret sharing}
+\subsection{Shamair's secret sharing}
+
+Let us assume that $2 \le k \le n$.
+We want to share a secret between $n$ member, which they can open only when at least $k$ members are present.
+
+Let us a fix a finite field $F=GF(q)$ with $q > n$ and $0 \neq \alpha \in F$ such that $\mathrm{ord}_q(\alpha) \ge n$.
+The secret they want to share and cannot open without $k$ members of the party present is $s \in F$.
+An orchestrator must select $f_i \in_{R} F$ for $i=1,\ldots,k-1$ and create the values $b_i = f(a_i)$ withe the polynomial
+\[
+    f = s + f_1 x + \cdots f_{k-1}x^{k-1}
+\]
+where $a_i = \alpha^{i}$ and $i=1,\ldots,n$. The secret is $s = f(0)$.
+The orchestrator then distributes the the pairs $(a_i, b_i)$ between the members ($i=1,\ldots,n$).
+
+If the
+\[
+    \left\{ i_1, i_2, \ldots, i_k \right\} \subset \left\{ 1,\dots,n \right\}
+\]
+members are present they can create the Lagrange interpolation polynomial $g$ for which $g(a_{i_j}) = b_{i_j}$.
+Since $\mathrm{deg}(f), \mathrm{deg}(g) \le k-1$ and they agree on $k$ different points they must be the same polynomial, i.e.\ $f=g$.
+The members present can recover the secret $s=g(0)$.
+
 \subsection{Error correction wih polynomials}
 
+\subsubsection{Baby Reed-Solomon error correction}
+
+The symbols of the message are coming from the finite field $F=GF(q)$.
+The length of the message is $k$ and we add $m$ extra redundant symbols during encoding.
+The length of the encoded message is $n=k+m$.
+Select nonzero $\alpha \in F$ such that $\mathrm{ord}_q(\alpha) \ge n$.
+
+\paragraph{Encoding}
+The message $m=(m_0,\ldots,m_{k_1}) \in F^k$.
+Let us create the Lagrange interpolation polynomial $g$ for which $g(\alpha^i) = m_i$ holds for $i=0,\ldots,k-1$.
+The encoded message is 
+\begin{align*}
+    F \ni e &= (e_0,\ldots,e_{k-1},e_k,\ldots,e_{n-1}) \\
+            &= (g(\alpha^0),\ldots,g(\alpha^{k-1}),g(\alpha^{k}),\ldots,g(\alpha^{n-1})) \\
+            &= (m_0,\ldots,m_{k-1},g(\alpha^{k}),\ldots,g(\alpha^{n-1})).
+\end{align*}
+
+\paragraph{Decoding}
+We receive $r=(r_0,\ldots,r_{n-1}) \in F^n$. For all $k$ element index set
+\[
+    \left\{ i_0,\ldots,i_{k-1} \right\} \subset \left\{ 0,\ldots,n-1 \right\},
+\]
+create the Lagrange interpolation polynomial $g$ with $g(\alpha^{i_j})=r_{i_j}$ for $j=0,\ldots,k-1$ and add one vote for this polynomial.
+
+If there was no error in transmission, only one polynomial is created and it gets all the votes.
+In this case, decoding is just trimming the redundancy symbols, i.e.\ $m_i=r_i$ for $i=0,\ldots,k-1$.
+
+If there was at least one error, different polynomials will be created.
+If there is a polynomial $g^*$ which has the majority of votes, we can decode with it.
+Let $m_i = g^*(\alpha^i)$ for $i=0,\ldots,k-1$.
+If we cannot select a winner, then we cannot correct the error and must report it.
+
+\subsection{Grownup Reed-Solomon error correction}
+
+Let $F=GF(q)$, $0 \neq \alpha \in F$ with $\mathrm{ord}_q(\alpha) \ge n$ and $0 < k < n$.
+We want to detect and correct errors during the transmission of $m=m_0 + m_1 x + \cdots m_{k-1} x^{k-1}$.
+
+\paragraph{Encoding}
+Let us define the generator polynomial of the encoding with $g = \prod_{i=1}^t \left( x - \alpha^i \right)$ where $t=n-k$.
+The encoded message is $c = mx^t - r$, where $r = mx^t \bmod g$.
+
+\paragraph{Decoding}
+Let us assume that we receive $c' = c + e$.
+Since $g \mid c$, every root of $g$ must be a root of $c$ as well.
+Let $s = s_0 + s_1x + \cdots s_{t-1}x^{t-1}$ where $s_i = c'(\alpha^{i+1})$.
+If $e=0$, then $s=0$ and we can accept $c'$ as a transmission without any error.
+We can extract the original message as the last $k$ coefficients of $c'$.
+
+If $s \neq 0$, then there was error during transmission, so $e \neq 0$.
+We can modify the extended Euclidean algorithm to produce the \emph{error location polynomial} $L$ and the \emph{error value polynomial} $E$ in Algorithm \ref{alg:calc-error-polynomials}.
+
+\begin{algorithm}
+    \caption{Calculating the error location and error value polynomials}
+    \label{alg:calc-error-polynomials}
+    \begin{algorithmic}[1]
+        \Procedure{CalculateErrorPolynomails}{$s$, $t$}
+            \State $r^{(\mathrm{old})},\ y^{(\mathrm{old})} \gets x^t,\ 0$
+            \State $r^{(\mathrm{new})},\ y^{(\mathrm{new})} \gets s,\ 1$
+            \While{$\mathrm{deg}(r^{(\mathrm{new})}) > \frac{t}{2}$}
+                \State $r^{(\mathrm{old})},\ q,\ r^{(\mathrm{new})} \gets r^{(\mathrm{new})},\ \divmod{r^{(\mathrm{old})}}{r^{(\mathrm{new})}}$
+                \State $y^{(\mathrm{old})},\ y^{(\mathrm{new})} \gets y^{(\mathrm{new})},\ y^{(\mathrm{old})} - q y^{(\mathrm{new})}$
+            \EndWhile
+            \State $L \gets y^{(\mathrm{new})}/y^{(\mathrm{new})}(0)$
+            \State $E \gets r^{(\mathrm{new})}/y^{(\mathrm{new})}(0)$
+            \State \textbf{return} $L,\ E$
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+It can be proven that $L=\prod_{e_j \neq 0}\left( 1 - \alpha^{j}x \right)$. This means that if $\alpha^{-j}$ is a root of $L$, then $e_j \neq 0$, i.e.\ $j$ is an error position of $c'$.
+For the other computed polynomial we have that $E = \sum_{e_j \neq 0} \alpha^{j} e_j L_j$ where 
+\[
+    L_j = \prod_{\substack{e_i \neq 0 \\ j \neq i}} \left( 1 -\alpha^i x\right).
+\]
+Therefore
+\[
+    e_j = \frac{E(\alpha^{-j})}{\alpha^{j}L_j(\alpha^{-j})}
+\]
+is the error at location $j$.
 \end{document}
