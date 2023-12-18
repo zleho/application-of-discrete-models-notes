@@ -943,7 +943,7 @@ The encoded message is $c = mx^t - r$, where $r = mx^t \bmod g$.
 \paragraph{Decoding}
 Let us assume that we receive $c' = c + e$.
 Since $g \mid c$, every root of $g$ must be a root of $c$ as well.
-Let $s = s_0 + s_1x + \cdots s_{t-1}x^{t-1}$ where $s_i = c'(\alpha^{i+1})$.
+Let \emph{syndrome polynomial} $s = s_0 + s_1x + \cdots s_{t-1}x^{t-1}$ where $s_i = c'(\alpha^{i+1})$.
 If $e=0$, then $s=0$ and we can accept $c'$ as a transmission without any error.
 We can extract the original message as the last $k$ coefficients of $c'$.
 
@@ -978,4 +978,40 @@ Therefore
     e_j = \frac{E(\alpha^{-j})}{\alpha^{j}L_j(\alpha^{-j})}
 \]
 is the error at location $j$.
+
+\subsubsection{Example}
+
+Let $F=\Z_{11}$, $n=10$, $k=6$ so $t=n-k=4$. 
+In $\Z_11$ we have that $\mathrm{ord}_{11}(2) = 10$, so we can use $\prod_{i=1}^4 \left( x - 2^i \right)$ for encoding.
+Note that every operator is done with respect to $\mod 11$.
+In particular, divisor is done by multiplication with the modular inverse.
+
+Let us assume that we receive $c' = 4 + 4x + 8x^2 + 4x^3 + x^4 + 10x^5 + 10x^6 + 6x^7 + 2x^8$.
+To calculate the coefficients of the syndrome polynomial $s$ we plug in the values $2$, $2^2=4$, $2^3=8$ and $2^4 \mod 11 = 5$ into $c'$
+\begin{align*}
+    s_0 &= 4 + 4 \cdot 2  + 8\cdot 2^2 + 4\cdot 2^3 + 2^4 + 10\cdot 2^5 + 10 \cdot 2^6 + 6 \cdot 2^7 + 2 \cdot 2^8 = 0, \\
+    s_1 &= 4 + 4 \cdot 4  + 8\cdot 4^2 + 4\cdot 4^3 + 4^4 + 10\cdot 4^5 + 10 \cdot 4^6 + 6 \cdot 4^7 + 2 \cdot 4^8 = 10, \\
+    s_2 &= 4 + 4 \cdot 4  + 8\cdot 8^2 + 4\cdot 8^3 + 8^4 + 10\cdot 8^5 + 10 \cdot 8^6 + 6 \cdot 8^7 + 2 \cdot 8^8 = 2, \\
+    s_3 &= 4 + 4 \cdot 5  + 8\cdot 5^2 + 4\cdot 5^3 + 5^4 + 10\cdot 5^5 + 10 \cdot 5^6 + 6 \cdot 5^7 + 2 \cdot 5^8 = 5.
+\end{align*}
+In summary $s=10x + 2x^2 + 5x^3$.
+
+During Algorithm \ref{alg:calc-error-polynomials} for the syndrome polynomial with $t=2$, we stop the extended Euclidean algorithm steps at
+\[
+    r^{(2)} = 2x, \qquad y^{(2)} = 9 + 7x + 4x^2.
+\]
+The inverse of $y^{(2)}(0)=9$ is $5$, so $L = 9x^2 + 2x + 1 = (1-4x)(1-5x)$.
+From this we can see that $4^{-1}$ and $5^{-1}$ are the roots of $L$.
+Since $4 = 2^2$ and $5 = 2^4$, we have that the locations of errors are $j=2,4$.
+
+The error polynomial is $E=5r^{(2)} = 10x$. Since $L_2 = 1-5x$ and $L_4 = 1-4x$, we can calculate the error values as
+\[
+    e_2 = \frac{E\left(4^{-1}\right)}{2^2 L_2\left(4^{-1}\right)} = \frac{8}{4 \cdot 8} = 3
+\]
+and
+\[
+    e_4 = \frac{E\left(5^{-1}\right)}{2^4 L_5\left(5^{-1}\right)} = \frac{2}{5 \cdot 9} = 2,
+\]
+so the error is $e=3x^2 + 2x^4$.
+
 \end{document}
